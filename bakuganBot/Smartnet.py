@@ -46,7 +46,7 @@ train_datagen = ImageDataGenerator(
 validation_datagen = ImageDataGenerator(rescale=1. / 255, preprocessing_function=preprocess_input)
 
 # Change the batchsize according to your system RAM
-train_batchsize = 20
+train_batchsize = 64
 val_batchsize = 10
 train_dir = "train_dir"
 validation_dir = "validation_dir"
