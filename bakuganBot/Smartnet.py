@@ -36,7 +36,7 @@ model.add(Activation('relu'))
  #   layer.trainable = False
 
 # Check the trainable status of the individual layers
-for layer in vgg_conv.layers:
+for layer in model.layers:
     print(layer, layer.trainable)
 from keras import models
 from keras import layers
@@ -45,7 +45,7 @@ from keras import optimizers
 # Add new layers
 model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(3, activation='softmax'))
+model.add(layers.Dense(2, activation='softmax'))
 
 # Show a summary of the model. Check the number of trainable parameters
 model.summary()
@@ -62,11 +62,11 @@ validation_datagen = ImageDataGenerator(rescale=1. / 255)
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # Change the batchsize according to your system RAM
-train_batchsize = 20
+train_batchsize = 64
 val_batchsize = 10
-train_dir = "/content/drive/My Drive/Colab Notebooks/train_dir/"
+train_dir = "train_dir"
 
-validation_dir = "/content/drive/My Drive/Colab Notebooks/validation_dir/"
+validation_dir = "validation_dir/"
 
 
 train_generator = train_datagen.flow_from_directory(
@@ -107,7 +107,7 @@ history = model.fit_generator(
     verbose=1)
 
 # Save the model
-model.save('/content/drive/My Drive/Colab Notebooks/small_last4.h5')
+model.save('small_last4.h5')
 acc = history.history['acc']
 val_acc = history.history['val_acc']
 loss = history.history['loss']
