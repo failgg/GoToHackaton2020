@@ -1,11 +1,14 @@
-from keras.applications import VGG16
+#from keras.applications import VGG16, mobilenet_v2
+from keras.applications.resnet50 import ResNet50
+from keras.preprocessing import image
+from keras.applications.resnet50 import preprocess_input, decode_predictions 
 import PIL
 import matplotlib.pyplot as plt
 import numpy as np
 #Load the VGG model
 from keras.preprocessing.image import ImageDataGenerator,load_img
-image_size = 360
-vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
+image_size = 224
+vgg_conv = ResNet50(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
 # Freeze the layers except the last 4 layers
 #for layer in vgg_conv.layers[:-4]:
  #   layer.trainable = False
@@ -44,8 +47,8 @@ validation_datagen = ImageDataGenerator(rescale=1. / 255)
 # Change the batchsize according to your system RAM
 train_batchsize = 20
 val_batchsize = 10
-train_dir = "train_dir"
-validation_dir = "validation_dir"
+train_dir = "/gdrive/My Drive/Colab Notebooks/train_dir"
+validation_dir = "/gdrive/My Drive/Colab Notebooks/validation_dir"
 train_generator = train_datagen.flow_from_directory(
     train_dir,
     target_size=(image_size, image_size),
@@ -148,5 +151,5 @@ for i in range(len(errors)):
     plt.title(title)
     plt.imshow(original)
     plt.show()
-#class Bakugan:
+
 
