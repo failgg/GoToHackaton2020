@@ -1,14 +1,36 @@
 #from keras.applications import VGG16, mobilenet_v2
-from keras.applications.resnet50 import ResNet50
+#from keras.applications.resnet50 import ResNet50
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Conv2D, MaxPooling2D
 from keras.preprocessing import image
-from keras.applications.resnet50 import preprocess_input, decode_predictions 
+from keras.applications.resnet50 import preprocess_input, decode_predictions
 import PIL
 import matplotlib.pyplot as plt
 import numpy as np
+from io import BytesIO
+from PIL import Image, ImageFile
 #Load the VGG model
 from keras.preprocessing.image import ImageDataGenerator,load_img
 image_size = 224
-vgg_conv = ResNet50(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
+model = Sequential()
+model.add(Conv2D(32, (3, 3), padding='same', input_shape=(image_size,image_size,3)))
+model.add(Activation('relu'))
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(64, (3, 3), padding='same'))
+model.add(Activation('relu'))
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(512))
+model.add(Activation('relu'))
 # Freeze the layers except the last 4 layers
 #for layer in vgg_conv.layers[:-4]:
  #   layer.trainable = False
@@ -20,15 +42,8 @@ from keras import models
 from keras import layers
 from keras import optimizers
 
-# Create the model
-model = models.Sequential()
-
-# Add the vgg convolutional base model
-model.add(vgg_conv)
-
 # Add new layers
-model.add(layers.Flatten())
-model.add(layers.Dense(1024, activation='relu'))
+model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dropout(0.5))
 model.add(layers.Dense(3, activation='softmax'))
 
@@ -40,16 +55,20 @@ train_datagen = ImageDataGenerator(
     width_shift_range=0.2,
     height_shift_range=0.2,
     horizontal_flip=True,
-    fill_mode='nearest',
-    preprocessing_function=preprocess_input)
+    fill_mode='nearest')
 
-validation_datagen = ImageDataGenerator(rescale=1. / 255, preprocessing_function=preprocess_input)
+validation_datagen = ImageDataGenerator(rescale=1. / 255)
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # Change the batchsize according to your system RAM
-train_batchsize = 64
+train_batchsize = 20
 val_batchsize = 10
-train_dir = "train_dir"
-validation_dir = "validation_dir"
+train_dir = "/content/drive/My Drive/Colab Notebooks/train_dir/"
+
+validation_dir = "/content/drive/My Drive/Colab Notebooks/validation_dir/"
+
+
 train_generator = train_datagen.flow_from_directory(
     train_dir,
     target_size=(image_size, image_size),
@@ -76,7 +95,7 @@ validation_generator = validation_datagen.flow_from_directory(
 #validation_labels = np.array([0] * 1000 + [1] * 1000)
 
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.Adam(lr=2e-3),
+              optimizer=optimizers.RMSprop(lr=1e-4),
               metrics=['acc'])
 # Train the model
 history = model.fit_generator(
@@ -88,7 +107,7 @@ history = model.fit_generator(
     verbose=1)
 
 # Save the model
-model.save('small_last4.h5')
+model.save('/content/drive/My Drive/Colab Notebooks/small_last4.h5')
 acc = history.history['acc']
 val_acc = history.history['val_acc']
 loss = history.history['loss']
