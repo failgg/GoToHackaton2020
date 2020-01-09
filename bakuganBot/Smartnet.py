@@ -5,10 +5,10 @@ import numpy as np
 #Load the VGG model
 from keras.preprocessing.image import ImageDataGenerator,load_img
 image_size = 360
-vgg_conv = VGG16(weights=None, include_top=False, input_shape=(image_size, image_size, 3))
+vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
 # Freeze the layers except the last 4 layers
-for layer in vgg_conv.layers[:-4]:
-    layer.trainable = False
+#for layer in vgg_conv.layers[:-4]:
+ #   layer.trainable = False
 
 # Check the trainable status of the individual layers
 for layer in vgg_conv.layers:
@@ -148,3 +148,5 @@ for i in range(len(errors)):
     plt.title(title)
     plt.imshow(original)
     plt.show()
+#class Bakugan:
+
