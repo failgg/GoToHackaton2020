@@ -40,9 +40,10 @@ train_datagen = ImageDataGenerator(
     width_shift_range=0.2,
     height_shift_range=0.2,
     horizontal_flip=True,
-    fill_mode='nearest')
+    fill_mode='nearest',
+    preprocessing_function=preprocess_input)
 
-validation_datagen = ImageDataGenerator(rescale=1. / 255)
+validation_datagen = ImageDataGenerator(rescale=1. / 255, preprocessing_function=preprocess_input)
 
 # Change the batchsize according to your system RAM
 train_batchsize = 20
@@ -75,7 +76,7 @@ validation_generator = validation_datagen.flow_from_directory(
 #validation_labels = np.array([0] * 1000 + [1] * 1000)
 
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-4),
+              optimizer=optimizers.Adam(lr=2e-3),
               metrics=['acc'])
 # Train the model
 history = model.fit_generator(
