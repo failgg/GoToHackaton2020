@@ -1,0 +1,17 @@
+import numpy as np
+from keras import Model
+from keras.models import load_model
+from keras_preprocessing.image import load_img, img_to_array
+
+model: Model = load_model('small_last4.h5')
+model.summary()
+
+
+def predict(img):
+    data: np.array = img_to_array(load_img(img, target_size=(224, 224)))
+    data = data * (1. / 255)
+    data = np.expand_dims(data, 0)
+
+    class_weights = model.predict_on_batch(data)
+    class_indices = np.argmax(class_weights, axis=-1)
+    return class_indices[0]
