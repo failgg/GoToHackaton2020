@@ -7,7 +7,7 @@ import Smartload
 from telebot import types
 from telebot import apihelper
 
-token = '970309668:AAHZX5VTRWBDhZ6XUyNKIJP9W28dVOqGtjA'
+token = 'secret'
 apihelper.proxy = {'https': 'socks5h://geek:socks@t.geekclass.ru:7777'}
 bot = telebot.TeleBot(token=token, threaded=False)
 
